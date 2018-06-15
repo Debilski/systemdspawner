@@ -70,6 +70,11 @@ class SystemdSpawner(Spawner):
         """
     ).tag(config=True)
 
+    use_user_slice = Bool(
+        False,
+        help="Run jupyterhub instance in the user’s slice unit."
+    ).tag(config=True)
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         # All traitlets configurables are configured by now
@@ -210,6 +215,9 @@ class SystemdSpawner(Spawner):
                 self._expand_user_vars('--property=ReadWriteDirectories={path}'.format(path=path))
                 for path in self.readwrite_paths
             ])
+
+        if self.use_user_slice:
+            cmd.extend(['--slice', 'user-{uid}.slice'.format(uid=pwnam.pw_uid)])
 
         # We unfortunately have to resort to doing cd with bash, since WorkingDirectory property
         # of systemd units can't be set for transient units via systemd-run until systemd v227.

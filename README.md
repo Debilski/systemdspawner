@@ -153,6 +153,7 @@ in your `jupyterhub_config.py` file:
 - **[`readonly_paths`](#readonly_paths)**
 - **[`readwrite_paths`](#readwrite_paths)**
 - **[`use_sudo`](#use_sudo)**
+- **[`use_user_slice`](#use_user_slice)**
 
 ### `mem_limit` ###
 
@@ -371,6 +372,22 @@ than things running as root :)
 c.SystemdSpawner.use_sudo = False
 ```
 Defaults to False.
+
+### `use_user_slice` ###
+
+Add the notebook instance to the user’s slice unit.
+
+Usually, all instances of jupyterhub run in the service.slice whereas logged in users
+(e.g. via ssh) will run in their own user-$UID.slice. This means that a user having access
+to ssh and to a jupyterhub instance will have access to twice as many resources as a user
+only using ssh.
+
+
+```python
+c.SystemdSpawner.use_user_slice = False
+```
+Defaults to False.
+
 
 ## Getting help ##
 
